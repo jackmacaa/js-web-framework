@@ -1,6 +1,11 @@
+import axios, { AxiosResponse } from 'axios';
+
+const domain = 'http://localhost:3000';
+
 interface UserProps {
-  name: string;
-  age: number;
+  id?: number;
+  name?: string;
+  age?: number;
 }
 
 type Callback = () => void;
@@ -11,7 +16,7 @@ export class User {
   constructor(private data: UserProps) {}
 
   get(propName: string): number | string {
-    return this.data[propName as keyof UserProps];
+    return this.data[propName as keyof UserProps] || '';
   }
 
   set(update: UserProps): void {
@@ -34,5 +39,22 @@ export class User {
     handlers.forEach((callback) => {
       callback();
     });
+  }
+
+  async fetch(): Promise<void> {
+    const response: AxiosResponse = await axios.get(
+      `${domain}/users/${this.get('id')}`
+    );
+    this.set(response.data);
+  }
+
+  save(): void {
+    const id = this.get('id');
+
+    if (id) {
+      axios.put(`${domain}/users/${id}`, this.data);
+    } else {
+      axios.post(`${domain}/users/${id}`, this.data);
+    }
   }
 }
