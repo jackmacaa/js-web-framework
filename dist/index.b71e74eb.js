@@ -559,12 +559,10 @@ function hmrAccept(bundle, id) {
 },{}],"h7u1C":[function(require,module,exports) {
 var _user = require("./models/User");
 const user = new (0, _user.User)({
-    id: 1
-});
-user.set({
     name: "Kora",
     age: 1
 });
+//user.set({ name: 'Jack', age: 30 });
 user.save();
 
 },{"./models/User":"4rcHn"}],"4rcHn":[function(require,module,exports) {
@@ -577,25 +575,12 @@ const domain = "http://localhost:3000";
 class User {
     constructor(data){
         this.data = data;
-        this.events = {};
     }
     get(propName) {
         return this.data[propName] || "";
     }
     set(update) {
         Object.assign(this.data, update);
-    }
-    on(eventName, callback) {
-        const handlers = this.events[eventName] || [];
-        handlers.push(callback);
-        this.events[eventName] = handlers;
-    }
-    trigger(eventName) {
-        const handlers = this.events[eventName];
-        if (!handlers || handlers.length === 0) return;
-        handlers.forEach((callback)=>{
-            callback();
-        });
     }
     async fetch() {
         const response = await (0, _axiosDefault.default).get(`${domain}/users/${this.get("id")}`);
